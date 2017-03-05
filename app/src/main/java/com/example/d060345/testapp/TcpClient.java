@@ -71,7 +71,7 @@ public class TcpClient {
 
             } catch (Exception e) {
 
-                Log.i("TCP","Socket closed!");
+                Log.e("TCP", "S: Error", e);
 
             } finally {
                 socket.close();
@@ -79,7 +79,7 @@ public class TcpClient {
 
         } catch (Exception e) {
 
-            Log.i("TCP","Socket closed!");
+            Log.e("TCP", "C: Error", e);
 
         }
 
