@@ -6,6 +6,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.StringWriter;
+import java.security.Timestamp;
+
 public class SocketActivity extends Activity {
 
     private TcpClient mTcpClient;
@@ -24,16 +30,34 @@ public class SocketActivity extends Activity {
             @Override
             public void onClick(View view) {
 
-                String message = "test message";
+                try {
 
-                //sends the message to the server
-                if (mTcpClient != null) {
-                    mTcpClient.sendMessage(message);
+                    JSONObject obj = new JSONObject();
+                    Long time = System.currentTimeMillis();
+                    obj.put("client", Constants.LOGIN_NAME);
+                    obj.put("time", time);
+
+                    String message = obj.toString();
+
+                    //sends the message to the server
+                    if (mTcpClient != null) {
+                        mTcpClient.sendMessage(message);
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
+
             }
         });
 
     }
+    public void onStop(){
+        super.onStop();
+
+        mTcpClient.stopClient();
+    }
+
 
     public class connectTask extends AsyncTask<String,String,TcpClient> {
 
