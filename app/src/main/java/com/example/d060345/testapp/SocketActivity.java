@@ -1,75 +1,75 @@
 package com.example.d060345.testapp;
 
 import android.app.Activity;
-import android.os.AsyncTask;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.View;
-import android.widget.Button;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.StringWriter;
-import java.security.Timestamp;
 
 public class SocketActivity extends Activity {
-
-    private TcpClient mTcpClient;
+    ConnectionService mService;
+    boolean mBound = false;
+    private Intent i;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_socket);
 
-        Button send = (Button)findViewById(R.id.send_button);
-
         // connect to the server
-        new connectTask().execute("");
-
-        send.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                try {
-
-                    JSONObject obj = new JSONObject();
-                    Long time = System.currentTimeMillis();
-                    obj.put("client", Constants.LOGIN_NAME);
-                    obj.put("time", time);
-
-                    String message = obj.toString();
-
-                    //sends the message to the server
-                    if (mTcpClient != null) {
-                        mTcpClient.sendMessage(message);
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        });
-
-    }
-    public void onStop(){
-        super.onStop();
-
-        mTcpClient.stopClient();
+        i = new Intent(this, ConnectionService.class);
+        bindService(i, mConnection, Context.BIND_AUTO_CREATE);
     }
 
-
-    public class connectTask extends AsyncTask<String,String,TcpClient> {
-
-        @Override
-        protected TcpClient doInBackground(String... message) {
-
-            //we create a TCPClient object and
-            mTcpClient = new TcpClient();
-            mTcpClient.run();
-
-            return null;
+    public void onButtonPress(View view){
+        if (mBound){
+            System.out.println("button pressed");
+            mService.sendMessage("test");
         }
 
+        /* try {
+
+            JSONObject obj = new JSONObject();
+            Long time = System.currentTimeMillis();
+            obj.put("client", Constants.LOGIN_NAME);
+            obj.put("time", time);
+
+            String message = obj.toString();
+
+            //sends the message to the server
+            if (mTcpClient != null) {
+                mTcpClient.sendMessage(message);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }*/
     }
+
+    public void onStop(){
+        super.onStop();
+        this.stopService(i);
+    }
+
+    /** Defines callbacks for service binding, passed to bindService() */
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            ConnectionService.LocalBinder binder = (ConnectionService.LocalBinder) service;
+            mService = binder.getService();
+            mBound = true;
+            mService.startConnection();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            mBound = false;
+        }
+    };
 }

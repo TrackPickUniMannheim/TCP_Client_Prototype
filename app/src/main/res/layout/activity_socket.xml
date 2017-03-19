@@ -9,6 +9,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/send_button"
             android:layout_gravity="center_vertical"
-            android:text="send" />
+            android:text="send"
+            android:onClick="onButtonPress" />
 
 </LinearLayout>

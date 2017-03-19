@@ -8,6 +8,7 @@ import java.net.Socket;
 public class TcpClient {
 
     public static final String SERVER_IP = "10.0.2.2"; //later Server's IP Adress
+    //public static final String SERVER_IP = "127.0.0.1"; //later Server's IP Adress
     public static final int SERVER_PORT = 4444;
     private String mServerMessage;
     private boolean mRun = false;
@@ -45,11 +46,13 @@ public class TcpClient {
 
         try {
             InetAddress serverAddr = InetAddress.getByName(SERVER_IP);
-
+            Log.e("TCP Client",serverAddr.toString());
             Log.e("TCP Client", "C: Connecting...");
 
             //create a socket to make the connection with the server
             Socket socket = new Socket(serverAddr, SERVER_PORT);
+
+            Log.e("TCP Client",socket.toString());
 
             try {
 
@@ -71,7 +74,7 @@ public class TcpClient {
 
             } catch (Exception e) {
 
-                Log.i("TCP","Socket closed!");
+                Log.i("TCP","Socket closed! (2)");
 
             } finally {
                 socket.close();
@@ -79,7 +82,7 @@ public class TcpClient {
 
         } catch (Exception e) {
 
-            Log.i("TCP","Socket closed!");
+            Log.i("TCP","Socket closed! (1)");
 
         }
 
