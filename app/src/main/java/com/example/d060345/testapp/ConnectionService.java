@@ -48,10 +48,10 @@ public class ConnectionService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        sendMessage(Constants.LOGIN_NAME + " closes Connection!");
         try {
             socket.close();
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         socket = null;
@@ -66,7 +66,6 @@ public class ConnectionService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        System.out.println("onBind");
         return mBinder;
     }
 

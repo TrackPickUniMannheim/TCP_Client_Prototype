@@ -8,6 +8,8 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class SocketActivity extends Activity {
     ConnectionService mService;
@@ -19,34 +21,24 @@ public class SocketActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_socket);
 
-        // connect to the server
+        // connect to the server by starting service
         i = new Intent(this, ConnectionService.class);
         bindService(i, mConnection, Context.BIND_AUTO_CREATE);
     }
 
     public void onButtonPress(View view){
         if (mBound){
-            System.out.println("button pressed");
-            mService.sendMessage("test");
-        }
-
-        /* try {
-
             JSONObject obj = new JSONObject();
             Long time = System.currentTimeMillis();
-            obj.put("client", Constants.LOGIN_NAME);
-            obj.put("time", time);
-
-            String message = obj.toString();
-
-            //sends the message to the server
-            if (mTcpClient != null) {
-                mTcpClient.sendMessage(message);
+            try {
+                obj.put("client", Constants.LOGIN_NAME);
+                obj.put("time", time);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }*/
+            String message = obj.toString();
+            mService.sendMessage(message);
+        }
     }
 
     public void onStop(){
